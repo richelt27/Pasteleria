@@ -2,6 +2,7 @@
 import { ArrowRight, Star, Clock, Truck, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { API_URL } from '../../config';
 
 interface Producto {
     id_producto: number;
@@ -17,7 +18,7 @@ const HomePage = () => {
     useEffect(() => {
         const fetchFavoritos = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/productos');
+                const res = await fetch(`${API_URL}/api/productos`);
                 if (res.ok) {
                     const data = await res.json();
                     // Tomamos los primeros 3 productos de la respuesta (o los últimos si quisiéramos novedades)

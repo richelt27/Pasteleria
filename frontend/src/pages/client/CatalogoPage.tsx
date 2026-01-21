@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { API_URL } from '../../config';
 import { Search, Filter, ShoppingCart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 
@@ -23,8 +24,8 @@ const CatalogoPage = () => {
         const fetchInitialData = async () => {
             try {
                 const [resProd, resCat] = await Promise.all([
-                    fetch('http://localhost:3000/api/productos'),
-                    fetch('http://localhost:3000/api/productos/categorias')
+                    fetch(`${API_URL}/api/productos`),
+                    fetch(`${API_URL}/api/productos/categorias`)
                 ]);
 
                 if (resProd.ok) setProductos(await resProd.json());

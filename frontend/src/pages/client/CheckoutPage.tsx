@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useCart } from '../../context/CartContext';
+import { API_URL } from '../../config';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, CreditCard, Banknote, MapPin, Calendar, ArrowLeft, Truck, CheckCircle } from 'lucide-react';
 
@@ -53,7 +54,7 @@ const CheckoutPage = () => {
                 costo_envio: costoEnvio
             };
 
-            const res = await fetch('http://localhost:3000/api/pedidos', {
+            const res = await fetch(`${API_URL}/api/pedidos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

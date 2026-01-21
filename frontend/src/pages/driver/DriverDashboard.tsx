@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { API_URL } from '../../config';
 import { MapPin, Phone, CheckCircle, Navigation, Clock, Truck, Camera, ShoppingBag } from 'lucide-react';
 
 // Tipos básicos (se podrían mover a un archivo types.ts)
@@ -34,11 +35,11 @@ const DriverDashboard = () => {
             const headers = { 'Authorization': `Bearer ${token}` };
 
             // 1. Mis Entregas
-            const res1 = await fetch('http://localhost:3000/api/entregas/mis-entregas', { headers });
+            const res1 = await fetch(`${API_URL}/api/entregas/mis-entregas`, { headers });
             if (res1.ok) setEntregas(await res1.json());
 
             // 2. Disponibles (Bolsa)
-            const res2 = await fetch('http://localhost:3000/api/entregas/disponibles', { headers });
+            const res2 = await fetch(`${API_URL}/api/entregas/disponibles`, { headers });
             if (res2.ok) setDisponibles(await res2.json());
 
         } catch (error) {
@@ -72,7 +73,7 @@ const DriverDashboard = () => {
                 body = JSON.stringify({ estado: newStatus });
             }
 
-            const res = await fetch(`http://localhost:3000/api/entregas/${id_entrega}/estado`, {
+            const res = await fetch(`${API_URL}/api/entregas/${id_entrega}/estado`, {
                 method: 'PUT',
                 headers,
                 body
@@ -87,7 +88,7 @@ const DriverDashboard = () => {
     const tomarPedido = async (id_entrega: number) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/entregas/tomar', {
+            const res = await fetch(`${API_URL}/api/entregas/tomar`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -145,8 +146,8 @@ const DriverDashboard = () => {
                     renderList.map(item => (
                         <div key={item.id_entrega} className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 relative overflow-hidden animate-fade-in">
                             <div className={`absolute top-0 left-0 w-2 h-full ${item.estado_delivery === 'EN_RUTA' ? 'bg-blue-500' :
-                                    item.estado_delivery === 'ENTREGADO' ? 'bg-green-500' :
-                                        activeTab === 'DISPONIBLES' ? 'bg-orange-400' : 'bg-yellow-400'
+                                item.estado_delivery === 'ENTREGADO' ? 'bg-green-500' :
+                                    activeTab === 'DISPONIBLES' ? 'bg-orange-400' : 'bg-yellow-400'
                                 }`}></div>
 
                             <div className="flex justify-between items-start mb-4 pl-4">
@@ -183,9 +184,8 @@ const DriverDashboard = () => {
                                 {activeTab === 'DISPONIBLES' ? (
                                     <button
                                         key="btn-take"
-                                        onClick={() => tomandoPedido(item.id_entrega)}
+                                        onClick={() => tomarPedido(item.id_entrega)}
                                         className="w-full bg-orange-500 active:bg-orange-600 text-white py-3 rounded-xl font-bold shadow-lg shadow-orange-200 flex items-center justify-center gap-2 animate-pulse"
-                                        onMouseDown={(e) => { e.preventDefault(); tomarPedido(item.id_entrega); }}
                                     >
                                         <ShoppingBag /> ¡Tomar Pedido!
                                     </button>

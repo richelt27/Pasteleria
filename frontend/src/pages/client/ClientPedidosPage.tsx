@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { API_URL } from '../../config';
 import { Package, Calendar, Truck, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -41,7 +42,7 @@ const ClientPedidosPage = () => {
 
             try {
                 // Agregar un timestamp para evitar cache
-                const res = await fetch(`http://localhost:3000/api/pedidos/mis-pedidos?t=${Date.now()}`, {
+                const res = await fetch(`${API_URL}/api/pedidos/mis-pedidos?t=${Date.now()}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
