@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Plus, Clock, ChefHat, CheckCircle, Package } from 'lucide-react';
+import { Plus, Clock, ChefHat } from 'lucide-react';
 import ProduccionModal from '../../components/modals/ProduccionModal';
 
 interface OrdenProduccion {
@@ -22,10 +22,8 @@ const ESTADOS = ['PENDIENTE', 'EN_PRODUCCION', 'HORNEADO', 'DECORADO', 'TERMINAD
 const ProduccionPage = () => {
     const [ordenes, setOrdenes] = useState<OrdenProduccion[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
 
     const fetchOrdenes = async () => {
-        setLoading(true);
         try {
             const token = localStorage.getItem('token');
             const response = await fetch('http://localhost:3000/api/produccion', {
@@ -36,8 +34,6 @@ const ProduccionPage = () => {
             }
         } catch (error) {
             console.error(error);
-        } finally {
-            setLoading(false);
         }
     };
 

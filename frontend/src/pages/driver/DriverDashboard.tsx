@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { API_URL } from '../../config';
-import { MapPin, Phone, CheckCircle, Navigation, Clock, Truck, Camera, ShoppingBag } from 'lucide-react';
+import { MapPin, Phone, Clock, Truck, Camera, ShoppingBag } from 'lucide-react';
 
 // Tipos básicos (se podrían mover a un archivo types.ts)
 interface Entrega {

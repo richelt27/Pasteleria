@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { API_URL } from '../../config';
-import { Search, Filter, ShoppingCart } from 'lucide-react';
+import { Search, ShoppingCart } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 
 interface Producto {
@@ -39,9 +39,7 @@ const CatalogoPage = () => {
         fetchInitialData();
     }, []);
 
-    const filteredProducts = selectedCategory
-        ? productos.filter(p => p.categoria?.nombre === categorias.find(c => c.id_categoria === selectedCategory)?.nombre)
-        : productos;
+
 
     const productsToDisplay = selectedCategory
         ? productos.filter(p => p.categoria && p.categoria.id_categoria === selectedCategory)
