@@ -8,6 +8,7 @@ export default {
     extend: {
       colors: {
         primary: '#4A3B32', // Un marrón chocolate elegante
+        'primary-dark': '#2C221C',
         secondary: '#D2B48C', // Marrón claro tipo galleta/pan
         accent: '#D4AF37', // Dorado para toques premium
         cream: '#FFFDD0', // Crema para fondos suaves
