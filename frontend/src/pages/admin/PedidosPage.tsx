@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Filter, ShoppingBag } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import PedidoModal from '../../components/modals/PedidoModal';
 
 interface Pedido {

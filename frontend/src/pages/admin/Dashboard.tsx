@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import {
     DollarSign, ShoppingBag, Package, AlertTriangle,
-    TrendingUp, Calendar
+    TrendingUp
 } from 'lucide-react';
 
 interface Stats {
@@ -163,7 +163,7 @@ const Dashboard = () => {
                                     paddingAngle={5}
                                     dataKey="cantidad"
                                 >
-                                    {topProductos.map((entry, index) => (
+                                    {topProductos.map((_entry, index) => (
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>

@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Search, ArrowDownUp } from 'lucide-react';
+import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import InsumoModal from '../../components/modals/InsumoModal';
 
 interface Insumo {

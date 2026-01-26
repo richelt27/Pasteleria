@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Search, MapPin, Truck, Calendar, User, CheckCircle, Camera, Eye, Filter } from 'lucide-react';
+import { Calendar, Camera } from 'lucide-react';
 
 interface Repartidor {
     id_usuario: number;
@@ -24,7 +24,7 @@ interface Entrega {
 const EntregaPage = () => {
     const [entregas, setEntregas] = useState<Entrega[]>([]);
     const [repartidores, setRepartidores] = useState<Repartidor[]>([]);
-    const [loading, setLoading] = useState(true);
+
 
     // Filtros
     const [statusFilter, setStatusFilter] = useState('ALL'); // ALL, PENDING, COMPLETED
@@ -38,7 +38,6 @@ const EntregaPage = () => {
     const [evidenceUrl, setEvidenceUrl] = useState<string | null>(null);
 
     const fetchEntregas = async (signal?: AbortSignal) => {
-        setLoading(true);
         try {
             const token = localStorage.getItem('token');
             let query = '';
@@ -89,8 +88,6 @@ const EntregaPage = () => {
             if (error.name !== 'AbortError') {
                 console.error('Error fetching entregas:', error);
             }
-        } finally {
-            if (!signal || !signal.aborted) setLoading(false);
         }
     };
 
