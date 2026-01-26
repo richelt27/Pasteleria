@@ -3,15 +3,7 @@ import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 
 interface Producto {
-    id_producto: number;
-    nombre: string;
-}
-
-interface Usuario {
-    id_usuario: number;
-    nombre_completo: string;
-    rol: { nombre: string }
-}
+import { API_URL } from '../../config';
 
 interface ProduccionModalProps {
     isOpen: boolean;
@@ -20,49 +12,40 @@ interface ProduccionModalProps {
 }
 
 const ProduccionModal = ({ isOpen, onClose, onSave }: ProduccionModalProps) => {
-    const [productos, setProductos] = useState<Producto[]>([]);
-    const [pasteleros, setPasteleros] = useState<Usuario[]>([]);
+    const [productos, setProductos] = useState<any[]>([]);
+    const [pasteleros, setPasteleros] = useState<any[]>([]);
 
-    const [formData, setFormData] = useState({
-        id_producto: 0,
-        cantidad_a_producir: 1,
-        id_pastelero_asignado: 0,
-        fecha_fin_estimada: '',
-        lote_interno: ''
-    });
-
+    const [cantidad, setCantidad] = useState(1);
+    const [selectedProducto, setSelectedProducto] = useState('');
+    const [selectedPastelero, setSelectedPastelero] = useState('');
+    const [loteInterno, setLoteInterno] = useState(''); // Added this state based on original form
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
-            // Cargar productos y pasteleros
-            const loadData = async () => {
-                const token = localStorage.getItem('token');
+            const fetchData = async () => {
                 try {
+                    const token = localStorage.getItem('token');
                     const [resProd, resUsers] = await Promise.all([
-                        fetch('http://localhost:3000/api/productos', { headers: { 'Authorization': `Bearer ${token}` } }),
-                        fetch('http://localhost:3000/api/usuarios', { headers: { 'Authorization': `Bearer ${token}` } })
+                        fetch(`${API_URL}/api/productos`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                        fetch(`${API_URL}/api/usuarios`, { headers: { 'Authorization': `Bearer ${token}` } })
                     ]);
 
                     if (resProd.ok) setProductos(await resProd.json());
                     if (resUsers.ok) {
-                        const allUsers: Usuario[] = await resUsers.json();
-                        // Filtrar usuarios que son Pastelero o Admin
-                        setPasteleros(allUsers.filter(u => u.rol.nombre === 'Pastelero' || u.rol.nombre === 'Admin'));
+                        const users: any[] = await resUsers.json();
+                        setPasteleros(users.filter(u => u.rol?.nombre === 'Pastelero' || u.rol?.nombre === 'Admin')); // Reverted filter to include Admin
                     }
                 } catch (error) {
-                    console.error("Error loading data", error);
+                    console.error(error);
                 }
             };
-            loadData();
-            // Reset form
-            setFormData({
-                id_producto: 0,
-                cantidad_a_producir: 1,
-                id_pastelero_asignado: 0,
-                fecha_fin_estimada: '',
-                lote_interno: ''
-            });
+            fetchData();
+            // Reset form states when modal opens
+            setCantidad(1);
+            setSelectedProducto('');
+            setSelectedPastelero('');
+            setLoteInterno('');
         }
     }, [isOpen]);
 
@@ -73,17 +56,17 @@ const ProduccionModal = ({ isOpen, onClose, onSave }: ProduccionModalProps) => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/produccion', {
+            const response = await fetch(`${API_URL}/api/produccion`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
-                    ...formData,
-                    id_producto: Number(formData.id_producto),
-                    cantidad_a_producir: Number(formData.cantidad_a_producir),
-                    id_pastelero_asignado: Number(formData.id_pastelero_asignado) || null
+                    id_producto: parseInt(selectedProducto),
+                    cantidad_a_producir: cantidad,
+                    id_pastelero_asignado: selectedPastelero ? parseInt(selectedPastelero) : null,
+                    lote_interno: loteInterno || null // Include lote_interno
                 })
             });
 
@@ -91,7 +74,7 @@ const ProduccionModal = ({ isOpen, onClose, onSave }: ProduccionModalProps) => {
                 onSave();
                 onClose();
             } else {
-                alert('Error al crear orden');
+                alert('Error al crear orden de producción');
             }
         } catch (error) {
             console.error(error);

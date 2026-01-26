@@ -1,18 +1,17 @@
 
 import { useState } from 'react';
 import { X, Save } from 'lucide-react';
+import { API_URL } from '../../config';
 
 interface CategoriaModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (nuevaCategoriaId?: number) => void;
+    onSave: () => void;
 }
 
 const CategoriaModal = ({ isOpen, onClose, onSave }: CategoriaModalProps) => {
-    const [formData, setFormData] = useState({
-        nombre: '',
-        imagen_url: ''
-    });
+    const [nombre, setNombre] = useState('');
+    const [imagenUrl, setImagenUrl] = useState('');
     const [loading, setLoading] = useState(false);
 
     if (!isOpen) return null;
@@ -22,23 +21,20 @@ const CategoriaModal = ({ isOpen, onClose, onSave }: CategoriaModalProps) => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/productos/categorias', {
+            const response = await fetch(`${API_URL}/api/productos/categorias`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({ nombre, imagen_url: imagenUrl })
             });
 
             if (response.ok) {
-                const data = await response.json();
-                onSave(data.id_categoria);
-                setFormData({
-                    nombre: '',
-                    imagen_url: ''
-                });
+                onSave();
                 onClose();
+                setNombre('');
+                setImagenUrl('');
             } else {
                 alert('Error al crear categoría');
             }

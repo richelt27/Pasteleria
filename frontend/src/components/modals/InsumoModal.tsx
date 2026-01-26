@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Save, Plus } from 'lucide-react';
 import ProveedorModal from './ProveedorModal';
+import { API_URL } from '../../config';
 
 interface Insumo {
     id_insumo?: number;
@@ -46,7 +47,7 @@ const InsumoModal = ({ isOpen, onClose, onSave, insumoToEdit }: InsumoModalProps
     const fetchProveedores = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/proveedores', {
+            const response = await fetch(`${API_URL}/api/proveedores`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -89,8 +90,8 @@ const InsumoModal = ({ isOpen, onClose, onSave, insumoToEdit }: InsumoModalProps
         try {
             const token = localStorage.getItem('token');
             const url = insumoToEdit
-                ? `http://localhost:3000/api/insumos/${insumoToEdit.id_insumo}`
-                : 'http://localhost:3000/api/insumos';
+                ? `${API_URL}/api/insumos/${insumoToEdit.id_insumo}`
+                : `${API_URL}/api/insumos`;
 
             const method = insumoToEdit ? 'PUT' : 'POST';
 

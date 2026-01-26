@@ -9,16 +9,8 @@ interface RecetaItem {
     unidad_uso: string;
     insumo: {
         nombre: string;
-        unidad: string;
-        costo_promedio: number;
-    };
-}
-
-interface Insumo {
-    id_insumo: number;
-    nombre: string;
-    unidad: string;
-}
+import { X, Save, Plus, Trash2 } from 'lucide-react';
+import { API_URL } from '../../config';
 
 interface RecetaModalProps {
     isOpen: boolean;
@@ -28,55 +20,59 @@ interface RecetaModalProps {
 }
 
 const RecetaModal = ({ isOpen, onClose, productId, productName }: RecetaModalProps) => {
-    const [items, setItems] = useState<RecetaItem[]>([]);
-    const [insumos, setInsumos] = useState<Insumo[]>([]);
+    const [insumos, setInsumos] = useState<any[]>([]);
+    const [recetaDetalles, setRecetaDetalles] = useState<{ id: number, id_insumo: number, cantidad_necesaria: number }[]>([]);
     const [loading, setLoading] = useState(false);
-
-    // Formulario para agregar insumo
-    const [selectedInsumo, setSelectedInsumo] = useState<number>(0);
-    const [cantidad, setCantidad] = useState<string>('');
 
     useEffect(() => {
         if (isOpen && productId) {
-            fetchReceta();
-            fetchInsumos();
+            fetchData();
         }
     }, [isOpen, productId]);
 
-    const fetchReceta = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/recetas/producto/${productId}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) setItems(await res.json());
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const fetchInsumos = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:3000/api/insumos`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) setInsumos(await res.json());
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const handleAdd = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!selectedInsumo || !cantidad) return;
-
+    const fetchData = async () => {
+        if (!productId) return;
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const insumoData = insumos.find(i => i.id_insumo === Number(selectedInsumo));
 
-            const res = await fetch('http://localhost:3000/api/recetas', {
+            // 1. Cargar receta existente
+            const resReceta = await fetch(`${API_URL}/api/recetas/producto/${productId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (resReceta.ok) {
+                const data = await resReceta.json();
+                if (data && data.detalles) {
+                    setRecetaDetalles(data.detalles.map((d: any) => ({
+                        id: d.id_detalle_receta,
+                        id_insumo: d.id_insumo,
+                        cantidad_necesaria: d.cantidad_necesaria
+                    })));
+                } else {
+                    setRecetaDetalles([]);
+                }
+            }
+
+            // 2. Cargar insumos disponibles
+            const resInsumos = await fetch(`${API_URL}/api/insumos`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (resInsumos.ok) setInsumos(await resInsumos.json());
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSave = async () => {
+        if (!productId) return;
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${API_URL}/api/recetas`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,16 +80,18 @@ const RecetaModal = ({ isOpen, onClose, productId, productName }: RecetaModalPro
                 },
                 body: JSON.stringify({
                     id_producto: productId,
-                    id_insumo: selectedInsumo,
-                    cantidad_requerida: cantidad,
-                    unidad_uso: insumoData?.unidad // Por defecto usamos la unidad del insumo
+                    detalles: recetaDetalles.map(d => ({
+                        id_insumo: d.id_insumo,
+                        cantidad_necesaria: d.cantidad_necesaria
+                    }))
                 })
             });
 
             if (res.ok) {
-                fetchReceta();
-                setCantidad('');
-                setSelectedInsumo(0);
+                alert('Receta guardada con éxito');
+                onClose();
+            } else {
+                alert('Error al guardar receta');
             }
         } catch (error) {
             console.error(error);
@@ -102,24 +100,36 @@ const RecetaModal = ({ isOpen, onClose, productId, productName }: RecetaModalPro
         }
     };
 
-    const handleDelete = async (id: number) => {
-        if (!confirm("¿Quitar este insumo de la receta?")) return;
-        try {
-            const token = localStorage.getItem('token');
-            await fetch(`http://localhost:3000/api/recetas/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            fetchReceta();
-        } catch (error) {
-            console.error(error);
+    const addDetalle = () => {
+        setRecetaDetalles([...recetaDetalles, { id: 0, id_insumo: 0, cantidad_necesaria: 0 }]);
+    };
+
+    const removeDetalle = async (index: number, id_detalle: number) => {
+        if (id_detalle > 0) {
+            // Eliminar bd si existe
+            try {
+                await fetch(`${API_URL}/api/recetas/${id_detalle}`, { // Este endpoint eliminaria el detalle especifico
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+            } catch (e) {
+                console.error(e);
+            }
         }
+        setRecetaDetalles(recetaDetalles.filter((_, i) => i !== index));
+    };
+
+    const handleDetalleChange = (index: number, field: string, value: any) => {
+        const newDetalles = [...recetaDetalles];
+        newDetalles[index] = { ...newDetalles[index], [field]: value };
+        setRecetaDetalles(newDetalles);
     };
 
     // Calcular costo total estimado
-    const costoTotal = items.reduce((sum, item) => {
-        const costo = Number(item.insumo.costo_promedio || 0);
-        return sum + (costo * item.cantidad_requerida);
+    const costoTotal = recetaDetalles.reduce((sum, detalle) => {
+        const insumo = insumos.find(i => i.id_insumo === detalle.id_insumo);
+        const costo = Number(insumo?.costo_promedio || 0);
+        return sum + (costo * detalle.cantidad_necesaria);
     }, 0);
 
     if (!isOpen) return null;

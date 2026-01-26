@@ -1,22 +1,30 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
+import { API_URL } from '../../config';
 
 interface ProveedorModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (nuevoProveedorId?: number) => void;
+    onSave: () => void;
+    proveedorToEdit?: any;
 }
 
-const ProveedorModal = ({ isOpen, onClose, onSave }: ProveedorModalProps) => {
+const ProveedorModal = ({ isOpen, onClose, onSave, proveedorToEdit }: ProveedorModalProps) => {
     const [formData, setFormData] = useState({
-        razon_social: '',
-        ruc: '',
-        contacto_nombre: '',
+        nombre_empresa: '',
+        contacto: '',
         telefono: '',
-        email_contacto: ''
+        email: ''
     });
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (proveedorToEdit) {
+            setFormData(proveedorToEdit);
+        } else {
+            setFormData({ nombre_empresa: '', contacto: '', telefono: '', email: '' });
+        }
+    }, [proveedorToEdit, isOpen]);
 
     if (!isOpen) return null;
 
@@ -25,8 +33,14 @@ const ProveedorModal = ({ isOpen, onClose, onSave }: ProveedorModalProps) => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/proveedores', {
-                method: 'POST',
+            const url = proveedorToEdit
+                ? `${API_URL}/api/proveedores/${proveedorToEdit.id_proveedor}`
+                : `${API_URL}/api/proveedores`;
+
+            const method = proveedorToEdit ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`

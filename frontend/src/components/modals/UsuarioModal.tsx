@@ -81,8 +81,8 @@ const UsuarioModal = ({ isOpen, onClose, onSave, usuarioToEdit }: UsuarioModalPr
         try {
             const token = localStorage.getItem('token');
             const url = usuarioToEdit
-                ? `http://localhost:3000/api/usuarios/${usuarioToEdit.id_usuario}`
-                : 'http://localhost:3000/api/usuarios';
+                ? `${API_URL}/api/usuarios/${usuarioToEdit.id_usuario}`
+                : `${API_URL}/api/usuarios`;
 
             const method = usuarioToEdit ? 'PUT' : 'POST';
 
