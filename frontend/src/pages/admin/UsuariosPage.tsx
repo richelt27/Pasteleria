@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import UsuarioModal from '../../components/modals/UsuarioModal';
+import { API_URL } from '../../config';
 
 interface Usuario {
     id_usuario: number;
@@ -30,7 +31,7 @@ const UsuariosPage = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/usuarios', {
+            const response = await fetch(`${API_URL}/api/usuarios`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -54,7 +55,7 @@ const UsuariosPage = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/usuarios/${id}`, {
+            const response = await fetch(`${API_URL}/api/usuarios/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

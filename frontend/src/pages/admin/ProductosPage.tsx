@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus as PlusIcon, Edit, Trash2, Search, Package, ScrollText } from 'lucide-react';
 import ProductoModal from '../../components/modals/ProductoModal';
 import RecetaModal from '../../components/modals/RecetaModal';
+import { API_URL } from '../../config';
 
 interface Categoria {
     id_categoria: number;
@@ -39,7 +40,7 @@ const ProductosPage = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/productos', {
+            const response = await fetch(`${API_URL}/api/productos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -62,7 +63,7 @@ const ProductosPage = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/productos/${id}`, {
+            const response = await fetch(`${API_URL}/api/productos/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

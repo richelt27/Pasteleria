@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Clock, ChefHat } from 'lucide-react';
 import ProduccionModal from '../../components/modals/ProduccionModal';
+import { API_URL } from '../../config';
 
 interface OrdenProduccion {
     id_produccion: number;
@@ -26,7 +27,7 @@ const ProduccionPage = () => {
     const fetchOrdenes = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/produccion', {
+            const response = await fetch(`${API_URL}/api/produccion`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -44,7 +45,7 @@ const ProduccionPage = () => {
     const handleEstadoChange = async (id: number, nuevoEstado: string) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/produccion/${id}/estado`, {
+            const response = await fetch(`${API_URL}/api/produccion/${id}/estado`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

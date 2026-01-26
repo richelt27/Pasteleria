@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import PedidoModal from '../../components/modals/PedidoModal';
+import { API_URL } from '../../config';
 
 interface Pedido {
     id_pedido: number;
@@ -20,7 +21,7 @@ const PedidosPage = () => {
 
     const fetchPedidos = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/pedidos', {
+            const res = await fetch(`${API_URL}/api/pedidos`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             if (res.ok) setPedidos(await res.json());
@@ -43,7 +44,7 @@ const PedidosPage = () => {
     };
 
     const handleStatusChange = async (id: number, newStatus: string) => {
-        await fetch(`http://localhost:3000/api/pedidos/${id}/estado`, {
+        await fetch(`${API_URL}/api/pedidos/${id}/estado`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

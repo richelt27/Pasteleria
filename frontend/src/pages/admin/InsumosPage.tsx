@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import InsumoModal from '../../components/modals/InsumoModal';
+import { API_URL } from '../../config';
 
 interface Insumo {
     id_insumo: number;
@@ -26,7 +27,7 @@ const InsumosPage = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/insumos', {
+            const response = await fetch(`${API_URL}/api/insumos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -48,7 +49,7 @@ const InsumosPage = () => {
         if (!window.confirm('¿Seguro que deseas eliminar este insumo?')) return;
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/insumos/${id}`, {
+            const response = await fetch(`${API_URL}/api/insumos/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
