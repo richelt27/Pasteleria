@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { X, Save, Trash2, Plus, Calculator } from 'lucide-react';
+import { X, Trash2, Plus } from 'lucide-react';
 
 interface RecetaItem {
     id_receta: number;

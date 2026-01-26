@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Save, Plus, Search } from 'lucide-react';
+import { X, Save, Plus } from 'lucide-react';
 import ProveedorModal from './ProveedorModal';
 
 interface Insumo {
