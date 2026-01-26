@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { API_URL } from '../../config';
 import { Calendar, Camera } from 'lucide-react';
 
 interface Repartidor {
@@ -24,7 +25,6 @@ interface Entrega {
 const EntregaPage = () => {
     const [entregas, setEntregas] = useState<Entrega[]>([]);
     const [repartidores, setRepartidores] = useState<Repartidor[]>([]);
-
 
     // Filtros
     const [statusFilter, setStatusFilter] = useState('ALL'); // ALL, PENDING, COMPLETED
@@ -75,7 +75,7 @@ const EntregaPage = () => {
 
             console.log(`Fetching: ${dateRange}`, query); // Debug
 
-            const res = await fetch(`http://localhost:3000/api/entregas${query}`, {
+            const res = await fetch(`${API_URL}/api/entregas${query}`, {
                 headers: { 'Authorization': `Bearer ${token}` },
                 signal // Abort signal
             });
@@ -94,7 +94,7 @@ const EntregaPage = () => {
     const fetchRepartidores = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/usuarios', {
+            const res = await fetch(`${API_URL}/api/usuarios`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -118,7 +118,7 @@ const EntregaPage = () => {
         if (!selectedEntregaId) return;
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:3000/api/entregas/asignar', {
+            const res = await fetch(`${API_URL}/api/entregas/asignar`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ const EntregaPage = () => {
                                     <td className="px-6 py-4 text-center">
                                         {entrega.evidencia_foto_url ? (
                                             <button
-                                                onClick={() => setEvidenceUrl(entrega.evidencia_foto_url ? `http://localhost:3000/${entrega.evidencia_foto_url}` : null)}
+                                                onClick={() => setEvidenceUrl(entrega.evidencia_foto_url ? `${API_URL}/${entrega.evidencia_foto_url}` : null)}
                                                 className="text-blue-500 hover:text-blue-700 flex items-center justify-center gap-1 mx-auto font-medium text-xs bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 hover:bg-blue-100 transition-colors"
                                             >
                                                 <Camera size={14} /> Ver Foto

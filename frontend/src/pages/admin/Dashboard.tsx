@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '../../config';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     PieChart, Pie, Cell
@@ -39,9 +40,9 @@ const Dashboard = () => {
                 const headers = { 'Authorization': `Bearer ${token}` };
 
                 const [resStats, resVentas, resTop] = await Promise.all([
-                    fetch('http://localhost:3000/api/reportes/stats', { headers }),
-                    fetch('http://localhost:3000/api/reportes/ventas', { headers }),
-                    fetch('http://localhost:3000/api/reportes/top-productos', { headers })
+                    fetch(`${API_URL}/api/reportes/stats`, { headers }),
+                    fetch(`${API_URL}/api/reportes/ventas`, { headers }),
+                    fetch(`${API_URL}/api/reportes/top-productos`, { headers })
                 ]);
 
                 if (resStats.ok) setStats(await resStats.json());
